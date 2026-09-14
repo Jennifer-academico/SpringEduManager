@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Evaluaciones - SpringEduManager</title>
+</head>
+
+<body>
+
+	<nav>
+		<a th:href="@{/cursos}">Cursos</a> |
+		<a th:href="@{/practicas}">Prácticas</a> |
+		<a th:href="@{/evaluaciones}">Evaluaciones</a> |
+		<span sec:authorize="hasRole('ADMIN')"><a th:href="@{/personas}">Personas</a> |</span>
+		<form th:action="@{/logout}" method="post" style="display:inline;">
+			<button type="submit">Cerrar sesión</button>
+		</form>
+	</nav>
+	<hr>
+
+	<h1>Evaluaciones y notas</h1>
+
+	<div th:each="curso : ${cursos}" style="border:1px solid #ccc; padding:10px; margin-bottom:25px;">
+		<h2 th:text="${curso.nombre} + ' (' + ${curso.codigo} + ')'"></h2>
+
+		<form th:action="@{/evaluaciones/curso/{id}/notas(id=${curso.id})}" method="post">
+			<table border="1" cellpadding="6">
+				<thead>
+					<tr>
+						<th>Estudiante</th>
+						<th th:each="ev : ${evaluacionesPorCurso.get(curso.id)}" th:text="${ev.nombre}"></th>
+						<th>Promedio</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="est : ${curso.estudiantes}">
+						<td th:text="${est.nombre}"></td>
+						<td th:each="ev : ${evaluacionesPorCurso.get(curso.id)}">
+							<input type="text" size="4" th:name="${'nota_' + ev.id + '_' + est.id}"
+								th:value="${notas.get(ev.id + '_' + est.id)}">
+						</td>
+						<td th:text="${promedios.get(curso.id + '_' + est.id)} ?: '-'"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div sec:authorize="hasAnyRole('ADMIN','DOCENTE')">
+				<button type="submit">Guardar notas</button>
+			</div>
+		</form>
+
+		<div sec:authorize="hasAnyRole('ADMIN','DOCENTE')" style="margin-top:10px;">
+			<form th:action="@{/evaluaciones}" method="post">
+				<input type="hidden" name="cursoId" th:value="${curso.id}">
+				<input type="text" name="nombre" placeholder="Nombre nueva evaluación (ej: Prueba 2)" required>
+				<button type="submit">Agregar evaluación</button>
+			</form>
+		</div>
+	</div>
+
+</body>
+
+</html>

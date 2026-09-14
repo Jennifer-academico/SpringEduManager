@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Activar cuenta - SpringEduManager</title>
+</head>
+
+<body>
+
+	<h1>Activar mi cuenta</h1>
+	<p>Si el administrador ya te registró, ingresa tu RUT y define una contraseña.</p>
+
+	<p th:if="${exito}" th:text="${exito}" style="color:green;"></p>
+	<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
+	<form th:action="@{/activar-cuenta}" th:object="${form}" method="post">
+		<label>RUT (formato 12345678-9): <input type="text" th:field="*{rut}"></label>
+		<span th:if="${#fields.hasErrors('rut')}" th:errors="*{rut}" style="color:red;"></span><br><br>
+
+		<label>Nueva contraseña: <input type="password" th:field="*{password}"></label>
+		<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red;"></span><br><br>
+
+		<button type="submit">Activar cuenta</button>
+	</form>
+
+	<p><a th:href="@{/login}">Ya tengo cuenta, iniciar sesión</a></p>
+
+</body>
+
+</html>

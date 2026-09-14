@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Login - SpringEduManager</title>
+</head>
+
+<body>
+
+	<h1>Iniciar sesión</h1>
+
+	<p th:if="${param.error}" style="color:red;">RUT o contraseña incorrectos.</p>
+	<p th:if="${param.logout}" style="color:green;">Sesión cerrada correctamente.</p>
+
+	<form th:action="@{/login}" method="post">
+		<label>RUT: <input type="text" name="username" placeholder="12345678-9" required></label><br><br>
+		<label>Contraseña: <input type="password" name="password" required></label><br><br>
+		<button type="submit">Entrar</button>
+	</form>
+
+	<p><a th:href="@{/activar-cuenta}">¿No tienes cuenta activa? Actívala aquí</a></p>
+
+</body>
+
+</html>

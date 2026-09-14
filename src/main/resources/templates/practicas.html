@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Prácticas - SpringEduManager</title>
+</head>
+
+<body>
+
+	<nav>
+		<a th:href="@{/cursos}">Cursos</a> |
+		<a th:href="@{/practicas}">Prácticas</a> |
+		<a th:href="@{/evaluaciones}">Evaluaciones</a> |
+		<span sec:authorize="hasRole('ADMIN')"><a th:href="@{/personas}">Personas</a> |</span>
+		<form th:action="@{/logout}" method="post" style="display:inline;">
+			<button type="submit">Cerrar sesión</button>
+		</form>
+	</nav>
+	<hr>
+
+	<h1>Prácticas</h1>
+
+	<table border="1" cellpadding="8">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Tema</th>
+				<th>Instrucciones</th>
+				<th>Fecha entrega</th>
+				<th>Curso</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="practica : ${practicas}">
+				<td th:text="${practica.id}"></td>
+				<td th:text="${practica.tema}"></td>
+				<td th:text="${practica.instrucciones}"></td>
+				<td th:text="${practica.fechaEntrega}"></td>
+				<td th:text="${practica.curso.nombre}"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div sec:authorize="hasAnyRole('ADMIN','DOCENTE')">
+		<h2>Agregar práctica</h2>
+		<form th:action="@{/practicas}" th:object="${form}" method="post">
+			<label>Tema: <input type="text" th:field="*{tema}"></label>
+			<span th:if="${#fields.hasErrors('tema')}" th:errors="*{tema}" style="color:red;"></span><br><br>
+
+			<label>Instrucciones: <input type="text" th:field="*{instrucciones}"></label>
+			<span th:if="${#fields.hasErrors('instrucciones')}" th:errors="*{instrucciones}"
+				style="color:red;"></span><br><br>
+
+			<label>Fecha entrega: <input type="date" th:field="*{fechaEntrega}"></label>
+			<span th:if="${#fields.hasErrors('fechaEntrega')}" th:errors="*{fechaEntrega}"
+				style="color:red;"></span><br><br>
+
+			<label>Curso:
+				<select th:field="*{cursoId}">
+					<option value="">-- Selecciona --</option>
+					<option th:each="curso : ${cursos}" th:value="${curso.id}" th:text="${curso.nombre}"></option>
+				</select>
+			</label>
+			<span th:if="${#fields.hasErrors('cursoId')}" th:errors="*{cursoId}" style="color:red;"></span><br><br>
+
+			<button type="submit">Guardar</button>
+		</form>
+	</div>
+
+</body>
+
+</html>

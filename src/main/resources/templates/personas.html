@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Personas - SpringEduManager</title>
+</head>
+
+<body>
+
+	<form th:action="@{/logout}" method="post" style="float:right;">
+		<button type="submit">Cerrar sesión</button>
+	</form>
+
+	<h1>Personas registradas</h1>
+
+	<table border="1" cellpadding="8">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Nombre</th>
+				<th>Email</th>
+				<th>RUT</th>
+				<th>Rol</th>
+				<th>Cuenta activa</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="persona : ${personas}">
+				<td th:text="${persona.id}"></td>
+				<td th:text="${persona.nombre}"></td>
+				<td th:text="${persona.email}"></td>
+				<td th:text="${persona.rut}"></td>
+				<td th:text="${persona.rol}"></td>
+				<td th:text="${persona.tieneCuentaActiva()} ? 'Sí' : 'No'"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>Precargar persona (estudiante o docente)</h2>
+
+	<form th:action="@{/personas}" th:object="${form}" method="post">
+		<label>Nombre: <input type="text" th:field="*{nombre}"></label>
+		<span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" style="color:red;"></span><br><br>
+
+		<label>Email: <input type="text" th:field="*{email}"></label>
+		<span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color:red;"></span><br><br>
+
+		<label>RUT (formato 12345678-9): <input type="text" th:field="*{rut}"></label>
+		<span th:if="${#fields.hasErrors('rut')}" th:errors="*{rut}" style="color:red;"></span><br><br>
+
+		<label>Rol:
+			<select th:field="*{rol}">
+				<option value="ESTUDIANTE">ESTUDIANTE</option>
+				<option value="DOCENTE">DOCENTE</option>
+			</select>
+		</label>
+		<span th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}" style="color:red;"></span><br><br>
+
+		<button type="submit">Precargar</button>
+	</form>
+
+</body>
+
+</html>

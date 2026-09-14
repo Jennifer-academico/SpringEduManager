@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Cursos - SpringEduManager</title>
+</head>
+
+<body>
+
+	<form th:action="@{/logout}" method="post" style="float:right;">
+		<button type="submit">Cerrar sesión</button>
+	</form>
+
+	<h1>Cursos</h1>
+
+	<div th:each="curso : ${cursos}" style="border:1px solid #ccc; padding:10px; margin-bottom:15px;">
+		<h3 th:text="${curso.nombre} + ' (' + ${curso.codigo} + ')'"></h3>
+		<p th:text="${curso.descripcion}"></p>
+		<p><strong>Docente:</strong> <span
+				th:text="${curso.docente != null} ? ${curso.docente.nombre} : 'Sin asignar'"></span></p>
+
+		<strong>Estudiantes inscritos:</strong>
+		<ul>
+			<li th:each="est : ${curso.estudiantes}" th:text="${est.nombre}"></li>
+			<li th:if="${curso.estudiantes.isEmpty()}">Sin estudiantes inscritos.</li>
+		</ul>
+
+		<div sec:authorize="hasRole('ADMIN')">
+			<form th:action="@{/cursos/{id}/inscribir(id=${curso.id})}" method="post">
+				<select name="estudianteId" required>
+					<option value="">-- Inscribir estudiante --</option>
+					<option th:each="est : ${estudiantes}" th:value="${est.id}" th:text="${est.nombre}"></option>
+				</select>
+				<button type="submit">Inscribir</button>
+			</form>
+		</div>
+	</div>
+
+	<div sec:authorize="hasRole('ADMIN')">
+		<h2>Agregar curso</h2>
+		<form th:action="@{/cursos}" th:object="${form}" method="post">
+			<label>Nombre: <input type="text" th:field="*{nombre}"></label>
+			<span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" style="color:red;"></span><br><br>
+
+			<label>Código: <input type="text" th:field="*{codigo}"></label>
+			<span th:if="${#fields.hasErrors('codigo')}" th:errors="*{codigo}" style="color:red;"></span><br><br>
+
+			<label>Descripción: <input type="text" th:field="*{descripcion}"></label>
+			<span th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"
+				style="color:red;"></span><br><br>
+
+			<label>Docente a cargo:
+				<select th:field="*{docenteId}">
+					<option value="">-- Sin asignar --</option>
+					<option th:each="doc : ${docentes}" th:value="${doc.id}" th:text="${doc.nombre}"></option>
+				</select>
+			</label><br><br>
+
+			<button type="submit">Guardar</button>
+		</form>
+	</div>
+
+</body>
+
+</html>
